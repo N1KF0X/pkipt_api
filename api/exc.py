@@ -1,0 +1,6 @@
+class EnrolleeSpecialityNotFound(Exception):
+    ...
+
+
+class EnrolleeNotFound(Exception):
+    ...
