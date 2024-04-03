@@ -1,16 +1,16 @@
 from django.contrib import admin
 from django.urls import path
-from api.views import * 
+from api import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(
-        'api/enrollee/<str:snils>/selected-specialities', 
-        EnrolleeSpeciality.as_view()
+        'api/enrollees/<str:snils>', 
+        views.EnrolleeAPIView.as_view(),
     ),
     path(
-        'api/enrollee/<str:snils>/rating', 
-        RatingAPIView.as_view()
+        'api/recruitmets', 
+        views.RecruitmentAPIView.as_view(),
     ),
 ]
