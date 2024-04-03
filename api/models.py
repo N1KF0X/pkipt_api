@@ -1,25 +1,17 @@
 from django.db import models
-from datetime import date
-
-PRIORITY_CHOICES = (
-    ('1', 1),
-    ('2', 2),
-    ('3', 3),
-)
 
 
-class Current(models.Model):
-    number = models.IntegerField(verbose_name='Номер')
-    is_open = models.BooleanField(verbose_name='Открыт')
-    year = models.IntegerField(verbose_name='Год')
+class Recruitment(models.Model):
+    name = models.CharField(max_length=50, verbose_name='ФИО')
+    closing_date = models.DateField(verbose_name='Дата Закрытия Набора')
 
     def __str__(self):
-        return f'{self.year} - {self.number}'
+        return self.name
 
     class Meta:
-        verbose_name = 'Поток'
-        verbose_name_plural = 'Потоки'
-        ordering = ['number', 'year']
+        verbose_name = 'Набор Студентов'
+        verbose_name_plural = 'Наборы Студентов'
+        ordering = ['id', 'closing_date']
 
 
 class Enrollee(models.Model):
@@ -27,12 +19,11 @@ class Enrollee(models.Model):
     snils = models.CharField(primary_key=True, max_length=14, verbose_name='СНИЛС')
     inn = models.CharField(max_length=12, verbose_name='ИНН')
     gpa = models.FloatField(verbose_name='Средний Балл')
-    application_date = models.DateField(null=True, verbose_name='Дата Подачи Документов')
-    current_id = models.ForeignKey(
-        Current, 
+    application_date = models.DateField(verbose_name='Дата Подачи Документов')
+    recruitment = models.ForeignKey(
+        Recruitment, 
         on_delete = models.CASCADE, 
-        verbose_name='Поток',
-        null=True,
+        verbose_name='Набор',
     )
 
     def __str__(self):
@@ -41,7 +32,7 @@ class Enrollee(models.Model):
     class Meta:
         verbose_name = 'Абитуриент'
         verbose_name_plural = 'Абитуриенты'
-        ordering = ['full_name', 'inn', 'gpa', 'current_id', 'application_date']
+        ordering = ['full_name', 'inn', 'gpa', 'recruitment', 'application_date']
 
 
 class Speciality(models.Model):
@@ -58,28 +49,27 @@ class Speciality(models.Model):
 
 
 class EnrolleeSpeciality(models.Model):
-    enrollee_snils = models.ForeignKey(
+    enrollee = models.ForeignKey(
         Enrollee, 
         on_delete = models.CASCADE, 
-        verbose_name='Абитуриент'
+        verbose_name='Абитуриент',
+        related_name='selected_specialities',
     )
-    speciality_name = models.ForeignKey(
+    speciality = models.ForeignKey(
         Speciality, 
         on_delete = models.CASCADE, 
-        verbose_name='Специальность'
+        verbose_name='Специальность',
     )
-    priority = models.CharField(
-        max_length=1, 
-        choices=PRIORITY_CHOICES, 
-        default='3',
-        verbose_name='Приоритет'
+    is_priority = models.BooleanField(
+        default=False,
+        verbose_name='Приоритетная'
     )
     is_enrolled = models.BooleanField(verbose_name='Зачислен', default=False)
 
     class Meta:
-        verbose_name = 'Выбранная специальность'
-        verbose_name_plural = 'Выбранные специальности'
-        ordering = ['enrollee_snils', 'priority']
+        verbose_name = 'Выбранная Специальность'
+        verbose_name_plural = 'Выбранные Специальности'
+        ordering = ['enrollee', 'speciality']
 
     def __str__(self):
         return f'{self.id}'
