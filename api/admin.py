@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from . import models
+from . import models, use_cases
 
 
 class EnrolleeAdmin(admin.ModelAdmin):
@@ -27,6 +27,18 @@ class EnrolleeSpecialityAdmin(admin.ModelAdmin):
 class RecruitmentAdmin(admin.ModelAdmin):
     list_display = ['name', 'closing_date']
     search_fields = ['name']
+    actions = ['enroll_recruitment', 'reset_enrollment']
+
+    @admin.action(description="Закрыть набор")
+    def enroll_recruitment(self, request, queryset):
+        print(f'\n\n\n{type(self)}\n{type(request)}\n{type(queryset)}\n\n\n')
+        for recruitment in queryset:
+            use_cases.enroll_recruitment(recruitment.name)
+
+    @admin.action(description="Отменить зачисление")
+    def reset_enrollment(self, request, queryset):
+        for recruitment in queryset:
+            use_cases.reset_enrollment(recruitment.name)
 
 
 admin.site.register(models.Enrollee, EnrolleeAdmin)
