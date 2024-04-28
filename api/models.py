@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Recruitment(models.Model):
-    name = models.CharField(max_length=50, verbose_name='ФИО')
+    name = models.CharField(max_length=50, verbose_name='ФИО', primary_key=True)
     closing_date = models.DateField(verbose_name='Дата Закрытия Набора')
 
     def __str__(self):
@@ -11,7 +11,7 @@ class Recruitment(models.Model):
     class Meta:
         verbose_name = 'Набор Студентов'
         verbose_name_plural = 'Наборы Студентов'
-        ordering = ['id', 'closing_date']
+        ordering = ['name', 'closing_date']
 
 
 class Enrollee(models.Model):
@@ -38,6 +38,7 @@ class Enrollee(models.Model):
 class Speciality(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название', primary_key=True)
     seats_amount = models.IntegerField(verbose_name='Количество Мест', default=25)
+    education_period = models.CharField(max_length=50, verbose_name='Срок Обучения', blank=True) 
     
     def __str__(self):
         return self.name

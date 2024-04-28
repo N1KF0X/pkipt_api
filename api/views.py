@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from .exc import *
 from django.http import *
 from rest_framework.views import APIView
+from . import responses
+from . import exc
 
 
 class RecruitmentAPIView(APIView):
@@ -17,44 +19,22 @@ class RecruitmentAPIView(APIView):
 
 class EnrolleeAPIView(APIView):
     def get(self, request, snils):
-        selected_specialities = serializers.SelectedSpecialitySerializer(
-            use_cases.get_selected_specialities_by_enrollee_snils(snils),
+        try:
+            enrollee = serializers.EnrolleeSerializer(
+                use_cases.get_enrollee(snils)
+            )
+            return Response(enrollee.data)
+        except(exc.EnrolleeNotFound):
+            raise responses.EnrolleNotFound()
+        except(exc.EnrolleeDoesNotHavePrioritySpeciality):
+            raise responses.EnrolleeDoesNotHavePrioritySpeciality()
+
+
+class SpecialityAPIView(APIView):
+    def get(self, request):  
+        specialities = serializers.SpecialitySerializer(
+            use_cases.get_specialities(),
             many=True,
         )
 
-        enrollee = serializers.EnrolleeSerializer(
-            use_cases.get_enrollee(snils)
-        )
-
-        return Response(enrollee.data)
-
-
-# class EnrolleeSpeciality(APIView):
-#     def get(self, request, snils):
-#         selected_specialities = get_selected_specialities_by_enrollee_snils(snils)
-#         serialized_selected_specialities = [
-#             EnrolleeSpecialitySerializer(selected_speciality).data 
-#             for selected_speciality in selected_specialities
-#         ]
-#         return Response({'data': serialized_selected_specialities})
-
-
-# class RatingAPIView(APIView):
-#     def get(self, request, snils):
-#         try:
-#             enrollee = get_enrollee(snils)
-#             speciality = get_selected_specialitiy_by_enrollee_snils(snils)
-#             rating = calculate_rating(snils)
-#         except EnrolleeNotFound:
-#             return HttpResponseNotFound('Абитуриент не найден.')
-#         except EnrolleeSpecialityNotFound:
-#             return HttpResponseBadRequest(content='Абитуриент не имеет приоритетную специальность.')
-
-#         json = {
-#             'data': {
-#                 'full_name': enrollee.full_name,
-#                 'speciality': speciality.speciality_name.name,
-#                 'rating': rating,
-#             }
-#         }
-#         return Response(json)
+        return Response(specialities.data)

@@ -1,6 +1,6 @@
-class EnrolleeSpecialityNotFound(Exception):
+class EnrolleeNotFound(Exception):
     ...
 
 
-class EnrolleeNotFound(Exception):
+class EnrolleeDoesNotHavePrioritySpeciality(Exception):
     ...

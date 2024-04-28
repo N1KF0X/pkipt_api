@@ -24,3 +24,9 @@ class RecruimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Recruitment
         fields = ['name', 'closing_date']
+
+
+class SpecialitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Speciality
+        fields = ['name', 'seats_amount', 'education_period']
