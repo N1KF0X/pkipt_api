@@ -29,4 +29,4 @@ class RecruimentSerializer(serializers.ModelSerializer):
 class SpecialitySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Speciality
-        fields = ['name', 'seats_amount', 'education_period']
+        fields = ['code', 'name', 'seats_amount', 'education_period']
