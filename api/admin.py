@@ -9,8 +9,8 @@ class EnrolleeAdmin(admin.ModelAdmin):
 
 
 class SpecialityAdmin(admin.ModelAdmin):
-    list_display = ['name', 'seats_amount']
-    search_fields = ['name']
+    list_display = ['code', 'name', 'seats_amount']
+    search_fields = ['name', 'code']
 
 
 class EnrolleeSpecialityAdmin(admin.ModelAdmin):
